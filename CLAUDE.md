@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Task Execution Shortcut
+
+当用户在新会话中只输入 `执行任务` 时，AI 必须按以下流程继续推进本仓库的多轮实现任务:
+
+1. 先读取根目录 `requirements.md`，理解完整需求、术语和验收标准。
+2. 再读取根目录 `tasks.md`，找到最靠前的未完成任务 (`- [ ]`)。
+3. 按 `tasks.md` 中该任务的 Scope / Files / Verify / Covers 执行实现，不要跳过依赖顺序。
+4. 完成代码、测试和必要文档验证后，将对应任务从 `[ ]` 改为 `[x]`。
+5. 如果任务需要参考之前的设计或验收背景，以 `requirements.md` 为准；如果需要知道下一步做什么，以 `tasks.md` 为准。
+6. 不要重新生成任务列表，除非用户明确要求更新任务拆分。
+
 ## Project Overview
 
 Claude Code Router is a tool that routes Claude Code requests to different LLM providers. It uses a Monorepo architecture with four main packages:
