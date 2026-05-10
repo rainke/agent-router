@@ -4,11 +4,20 @@
 
 ## 0. Baseline and Guardrails
 
-- [ ] 0.1 建立当前行为基线
+- [x] 0.1 建立当前行为基线
   - Scope: 记录现有 `ccr` CLI、`/v1/messages` Anthropic 请求、preset、usage cache、agent tool stream 的关键行为。
   - Files: `packages/cli/src/**`, `packages/core/src/**`, `packages/server/src/**`, `packages/shared/src/**`.
   - Verify: 能运行现有 build/test；列出当前失败项或缺失测试，不修复无关问题。
   - Covers: R17.
+  - Baseline:
+    - CLI: root bin and `packages/cli` expose `ccr`; help usage is `ccr [command] [preset-name]`; version output is `claude-code-router version: <version>`; `code` auto-starts the service, injects Anthropic env from `createEnvVariables()`, writes a Claude `--settings` temp file, increments/decrements the reference count, and calls `closeService()` when the child exits.
+    - Runtime paths: shared constants use `~/.claude-code-router` for config/plugins/presets/logs and `.claude-code-router.pid`; reference count is `<tmp>/claude-code-reference-count.txt`; Claude settings temp files are under `<tmp>/claude-code-router/ccr-settings-<hash>.json`.
+    - Server/API: router hooks, model/provider splitting, preset extraction, agent detection, agent tool stream interception, and streaming usage cache updates are all gated by pathname suffix `/v1/messages`; OpenAI chat/responses paths are not included in these hooks.
+    - Presets: namespaces are registered as `/preset/<name>` from installed preset manifests; request preset extraction removes `/v1/messages` from the pathname and does not validate the preset name at request time.
+    - Router: session ID comes from Anthropic `metadata.user_id` split on `_session_`; subagent tag is `<CCR-SUBAGENT-MODEL>` in `req.body.system[1].text`; Claude Haiku/background detection is not protocol-gated because only `/v1/messages` currently reaches router.
+    - Usage cache: non-stream payloads write `payload.usage`; stream payloads tee Anthropic SSE and parse `event: message_delta` usage; no OpenAI stream usage parser exists.
+    - Agent stream: image agent only inspects Anthropic message content, prepends Anthropic tool definitions, intercepts Anthropic `content_block_start` / `input_json_delta` / `content_block_stop`, and replays an internal `/v1/messages` request after tool results are collected.
+    - Verification: `pnpm build` first failed in non-TTY mode because pnpm wanted to purge `node_modules`; `CI=true pnpm build` needed network to restore dependencies, then failed at `packages/ui/src/components/ui/command.tsx:53` with TS2322 (`ReactNode` includes `bigint`, not assignable to `cmdk` children type). No repository `test` script or existing `*.test.*` / `*.spec.*` files were found.
 
 - [ ] 0.2 新增可重复运行的迁移检查脚本
   - Scope: 添加脚本检查源码与 package 字段中未解析的 `@CCR/*`、旧命令入口、旧路径常量等。
@@ -251,4 +260,3 @@
   - Commands: `pnpm build`, `pnpm test:pbt`, repository-specific test commands, `rg "@CCR/|ccr |claude-code-router|CCR-SUBAGENT-MODEL|ccrVersion"`.
   - Verify: 仅允许升级说明中必要的旧路径/字段提及；其余旧品牌残留均已处理或有明确例外说明。
   - Covers: All requirements.
-
