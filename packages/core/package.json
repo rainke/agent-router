@@ -50,7 +50,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@CCR/shared": "workspace:*",
+    "@agr/shared": "workspace:*",
     "@types/node": "^24.0.15",
     "esbuild": "^0.25.1",
     "tsx": "^4.20.3",

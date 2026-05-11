@@ -66,10 +66,10 @@ importers:
 
   packages/cli:
     devDependencies:
-      '@CCR/server':
+      '@agr/server':
         specifier: workspace:*
         version: link:../server
-      '@CCR/shared':
+      '@agr/shared':
         specifier: workspace:*
         version: link:../shared
       '@inquirer/prompts':
@@ -154,7 +154,7 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
     devDependencies:
-      '@CCR/shared':
+      '@agr/shared':
         specifier: workspace:*
         version: link:../shared
       '@types/node':
@@ -206,7 +206,7 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
     devDependencies:
-      '@CCR/shared':
+      '@agr/shared':
         specifier: workspace:*
         version: link:../shared
       '@types/adm-zip':

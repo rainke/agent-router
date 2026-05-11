@@ -7,7 +7,7 @@ import {
   DEFAULT_CONFIG,
   HOME_DIR,
   PLUGINS_DIR,
-} from "@CCR/shared";
+} from "@agr/shared";
 
 // Function to interpolate environment variables in config values
 const interpolateEnvVars = (obj: any): any => {

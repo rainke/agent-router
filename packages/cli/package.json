@@ -1,9 +1,9 @@
 {
-  "name": "@CCR/cli",
+  "name": "@agr/cli",
   "version": "2.0.0",
   "description": "CLI for Claude Code Router",
   "bin": {
-    "ccr": "dist/cli.js"
+    "agr": "dist/cli.js"
   },
   "scripts": {
     "build": "node ../../scripts/build-cli.js",
@@ -18,8 +18,8 @@
   "author": "musistudio",
   "license": "MIT",
   "devDependencies": {
-    "@CCR/server": "workspace:*",
-    "@CCR/shared": "workspace:*",
+    "@agr/server": "workspace:*",
+    "@agr/shared": "workspace:*",
     "@inquirer/prompts": "^5.0.0",
     "@types/archiver": "^7.0.0",
     "@types/node": "^24.0.15",

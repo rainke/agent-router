@@ -3,7 +3,7 @@ set -e
 
 # 发布脚本
 # - Core 包作为 @musistudio/llms npm 包发布
-# - CLI 包作为 @CCR/cli npm 包发布
+# - CLI 包作为 @agr/cli npm 包发布
 # - Server 包发布为 Docker 镜像
 
 VERSION=$(node -p "require('../packages/cli/package.json').version")
@@ -75,7 +75,7 @@ publish_core_npm() {
 publish_npm() {
   echo ""
   echo "========================================="
-  echo "发布 npm 包 @CCR/cli"
+  echo "发布 npm 包 @agr/cli"
   echo "========================================="
 
   # 检查是否已登录 npm
@@ -93,13 +93,13 @@ publish_npm() {
   # 创建临时的发布用 package.json
   node -e "
     const pkg = require('../packages/cli/package.json');
-    pkg.name = '@CCR/cli';
+    pkg.name = '@agr/cli';
     delete pkg.scripts;
     pkg.files = ['dist/*', 'README.md', 'LICENSE'];
     pkg.dependencies = {};
     // 移除 workspace 依赖
-    delete pkg.dependencies['@CCR/shared'];
-    delete pkg.dependencies['@CCR/server'];
+    delete pkg.dependencies['@agr/shared'];
+    delete pkg.dependencies['@agr/server'];
     pkg.dependencies['@musistudio/llms'] = require('../packages/server/package.json').dependencies['@musistudio/llms'];
     pkg.peerDependencies = {
       'node': '>=18.0.0'
@@ -128,7 +128,7 @@ publish_npm() {
 
   echo ""
   echo "✅ npm 包发布成功!"
-  echo "   包名: @CCR/cli@${VERSION}"
+  echo "   包名: @agr/cli@${VERSION}"
 }
 
 # ===========================

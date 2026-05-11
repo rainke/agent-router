@@ -21,7 +21,7 @@ import {
   type PresetFile,
   type ManifestFile,
   type PresetMetadata,
-} from "@CCR/shared";
+} from "@agr/shared";
 import fastifyMultipart from "@fastify/multipart";
 import AdmZip from "adm-zip";
 

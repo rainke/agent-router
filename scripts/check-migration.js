@@ -24,6 +24,7 @@ const ignoredDirs = new Set([
 ]);
 
 const issueGroups = [];
+const legacyWorkspaceScope = "@" + "CCR/";
 
 function addIssue(rule, filePath, message, index) {
   const location = index === undefined
@@ -108,11 +109,11 @@ function checkPackageFields() {
       );
     }
 
-    if (typeof pkg.name === "string" && pkg.name.startsWith("@CCR/")) {
+    if (typeof pkg.name === "string" && pkg.name.startsWith(legacyWorkspaceScope)) {
       addIssue(
         "legacy workspace scope",
         filePath,
-        `workspace package name must not use @CCR scope: ${pkg.name}`
+        `workspace package name must not use legacy workspace scope: ${pkg.name}`
       );
     }
 
@@ -129,7 +130,7 @@ function checkPackageFields() {
       if (!deps || typeof deps !== "object") continue;
 
       for (const depName of Object.keys(deps)) {
-        if (depName.startsWith("@CCR/")) {
+        if (depName.startsWith(legacyWorkspaceScope)) {
           addIssue(
             "legacy workspace dependency",
             filePath,
@@ -145,7 +146,11 @@ function run() {
   const sourceFiles = collectSourceFiles();
 
   checkPackageFields();
-  findMatches(sourceFiles, "unresolved @CCR reference", /@CCR\/[A-Za-z0-9_-]+/g);
+  findMatches(
+    sourceFiles,
+    "unresolved legacy workspace reference",
+    new RegExp(`${legacyWorkspaceScope}[A-Za-z0-9_-]+`, "g")
+  );
 
   if (!buildMode) {
     findMatches(

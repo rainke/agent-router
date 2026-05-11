@@ -27,7 +27,7 @@
 
 ## 1. Package, Workspace, and CLI Rename
 
-- [ ] 1.1 重命名根包、bin 和 workspace scope
+- [x] 1.1 重命名根包、bin 和 workspace scope
   - Scope: 根包名改为 `@musistudio/agent-router`，bin 仅保留 `agr`; 子包 `@CCR/*` 改为 `@agr/*`; 更新所有 workspace 内部依赖。
   - Files: `package.json`, `packages/*/package.json`, TypeScript imports, build config.
   - Verify: `rg "@CCR/" packages package.json` 返回 0；`pnpm build` 通过。
