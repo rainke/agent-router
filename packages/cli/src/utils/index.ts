@@ -265,9 +265,9 @@ export const getSettingsPath = async (content: string): Promise<string> => {
   // Hash the content using SHA256 algorithm
   const hash = createHash('sha256').update(content, 'utf-8').digest('hex');
 
-  // Create claude-code-router directory in system temp folder
-  const tempDir = path.join(os.tmpdir(), 'claude-code-router');
-  const fileName = `ccr-settings-${hash}.json`;
+  // Create agent-router directory in system temp folder
+  const tempDir = path.join(os.tmpdir(), 'agent-router');
+  const fileName = `agr-settings-${hash}.json`;
   const tempFilePath = path.join(tempDir, fileName);
 
   // Ensure the directory exists

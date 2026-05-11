@@ -39,7 +39,7 @@
   - Verify: `agr -h`, `agr help`, `agr -v`, `agr version` 输出和退出码符合要求。
   - Covers: R1-4, R1-5, R17-5.
 
-- [ ] 1.3 保持 `agr code` 与旧 `ccr code` 语义等价
+- [x] 1.3 保持 `agr code` 与旧 `ccr code` 语义等价
   - Scope: Claude 可执行文件启动、settings 临时文件、引用计数、服务清理逻辑迁移到 `agr` 命名。
   - Files: `packages/cli/src/utils/codeCommand.ts`, `packages/cli/src/utils/statusline.ts`, process utils.
   - Verify: `agr code [args...]` 使用 Anthropic env 与 settings 文件，子进程退出后执行清理。
