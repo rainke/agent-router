@@ -19,7 +19,7 @@
     - Agent stream: image agent only inspects Anthropic message content, prepends Anthropic tool definitions, intercepts Anthropic `content_block_start` / `input_json_delta` / `content_block_stop`, and replays an internal `/v1/messages` request after tool results are collected.
     - Verification: `pnpm build` first failed in non-TTY mode because pnpm wanted to purge `node_modules`; `CI=true pnpm build` needed network to restore dependencies, then failed at `packages/ui/src/components/ui/command.tsx:53` with TS2322 (`ReactNode` includes `bigint`, not assignable to `cmdk` children type). No repository `test` script or existing `*.test.*` / `*.spec.*` files were found.
 
-- [ ] 0.2 新增可重复运行的迁移检查脚本
+- [x] 0.2 新增可重复运行的迁移检查脚本
   - Scope: 添加脚本检查源码与 package 字段中未解析的 `@CCR/*`、旧命令入口、旧路径常量等。
   - Files: root `package.json`, package scripts, optional `scripts/**`.
   - Verify: `pnpm build` 中接入必要检查；失败时 stderr 输出引用位置。
