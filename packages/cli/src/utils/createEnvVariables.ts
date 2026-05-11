@@ -2,7 +2,7 @@ import { readConfigFile } from ".";
 
 /**
  * Get environment variables for Agent SDK/Claude Code integration
- * This function is shared between `ccr env` and `ccr code` commands
+ * This function is shared between `agr env` and `agr code` commands
  */
 export const createEnvVariables = async (): Promise<Record<string, string | undefined>> => {
   const config = await readConfigFile();

@@ -1,6 +1,6 @@
 /**
  * Install preset from GitHub marketplace
- * ccr install {presetname}
+ * agr install {presetname}
  */
 
 import { installPresetFromMarket } from './preset/install-github';
@@ -23,10 +23,10 @@ export async function handleInstallCommand(presetName: string): Promise<void> {
   try {
     if (!presetName) {
       console.error(`\n${BOLDYELLOW}Error:${RESET} Preset name is required\n`);
-      console.error('Usage: ccr install <preset-name>\n');
+      console.error('Usage: agr install <preset-name>\n');
       console.error('Examples:');
-      console.error('  ccr install my-preset');
-      console.error('  ccr install awesome-preset\n');
+      console.error('  agr install my-preset');
+      console.error('  agr install awesome-preset\n');
       console.error(`${DIM}Note: Preset must exist in the official marketplace.${RESET}\n`);
       process.exit(1);
     }

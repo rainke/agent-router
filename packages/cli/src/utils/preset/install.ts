@@ -198,7 +198,7 @@ export async function installPresetCli(
 
       // Check if preset with this name already exists BEFORE installing
       if (await isPresetInstalled(presetName)) {
-        throw new Error(`Preset '${presetName}' is already installed. To reconfigure, use: ccr preset install ${presetName}\nTo delete and reinstall, use: ccr preset delete ${presetName}`);
+        throw new Error(`Preset '${presetName}' is already installed. To reconfigure, use: agr preset install ${presetName}\nTo delete and reinstall, use: agr preset delete ${presetName}`);
       }
     } else {
       // Preset name (without path)

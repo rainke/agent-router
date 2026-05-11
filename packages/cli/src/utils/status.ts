@@ -14,13 +14,13 @@ export async function showStatus() {
         console.log(`📄 PID File: ${info.pidFile}`);
         console.log('');
         console.log('🚀 Ready to use! Run the following commands:');
-        console.log('   ccr code    # Start coding with Claude');
-        console.log('   ccr stop   # Stop the service');
+        console.log('   agr code    # Start coding with Claude');
+        console.log('   agr stop   # Stop the service');
     } else {
         console.log('❌ Status: Not Running');
         console.log('');
         console.log('💡 To start the service:');
-        console.log('   ccr start');
+        console.log('   agr start');
     }
     
     console.log('');

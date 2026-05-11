@@ -33,7 +33,7 @@
   - Verify: `rg "@CCR/" packages package.json` 返回 0；`pnpm build` 通过。
   - Covers: R1-1, R1-2, R1-3, R1-6.
 
-- [ ] 1.2 更新 CLI help/version 输出与命令入口
+- [x] 1.2 更新 CLI help/version 输出与命令入口
   - Scope: CLI usage 显示 `agr [command] [preset-name]`; version 首行显示 `agent-router version:`; 保留既有子命令集合。
   - Files: `packages/cli/src/cli.ts`, CLI utils.
   - Verify: `agr -h`, `agr help`, `agr -v`, `agr version` 输出和退出码符合要求。

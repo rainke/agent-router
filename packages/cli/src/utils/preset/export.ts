@@ -95,7 +95,7 @@ export async function exportPresetCli(
     console.log(`\n${BOLDCYAN}To share this preset:${RESET}`);
     console.log(`  1. Share the directory: ${result.presetDir}`);
     console.log(`  2. Upload to GitHub Gist or your repository`);
-    console.log(`  3. Others can install with: ${GREEN}ccr preset install <directory>${RESET}\n`);
+    console.log(`  3. Others can install with: ${GREEN}agr preset install <directory>${RESET}\n`);
 
   } catch (error: any) {
     console.error(`\n${YELLOW}Error exporting preset:${RESET} ${error.message}`);
