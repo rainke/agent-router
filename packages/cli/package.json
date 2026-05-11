@@ -21,6 +21,7 @@
     "@agr/server": "workspace:*",
     "@agr/shared": "workspace:*",
     "@inquirer/prompts": "^5.0.0",
+    "@types/adm-zip": "^0.5.7",
     "@types/archiver": "^7.0.0",
     "@types/node": "^24.0.15",
     "adm-zip": "^0.5.16",
@@ -30,6 +31,6 @@
     "minimist": "^1.2.8",
     "openurl": "^1.1.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^6.0.3"
   }
 }
