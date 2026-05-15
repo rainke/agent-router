@@ -53,7 +53,7 @@
   - Verify: 不存在硬编码 `~/.claude-code-router` 运行时读取路径；路径单测通过。
   - Covers: R2-1, R2-2, R2-3, R2-4, R3-1.
 
-- [ ] 2.2 更新目录初始化与默认配置写入
+- [x] 2.2 更新目录初始化与默认配置写入
   - Scope: `initDir()` 创建 `~/.agent-router`, `plugins`, `presets`, `logs`; 缺失配置写入最小默认配置 `{ PORT: 3456, Providers: [], Router: {} }`; I/O 失败非零退出并输出错误。
   - Files: shared/config init code, CLI/server startup paths.
   - Verify: 使用临时 HOME 覆盖成功/失败路径；不会读取或拷贝旧目录。

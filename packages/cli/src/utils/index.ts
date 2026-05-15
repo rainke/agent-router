@@ -48,10 +48,15 @@ const ensureDir = async (dir_path: string) => {
 };
 
 export const initDir = async () => {
-  await ensureDir(HOME_DIR);
-  await ensureDir(PLUGINS_DIR);
-  await ensureDir(PRESETS_DIR);
-  await ensureDir(path.join(HOME_DIR, "logs"));
+  try {
+    await ensureDir(HOME_DIR);
+    await ensureDir(PLUGINS_DIR);
+    await ensureDir(PRESETS_DIR);
+    await ensureDir(path.join(HOME_DIR, "logs"));
+  } catch (error: any) {
+    process.stderr.write(`Failed to initialize directories: ${error.message}\n`);
+    process.exit(1);
+  }
 };
 
 const createReadline = () => {
@@ -92,18 +97,11 @@ export const readConfigFile = async () => {
     }
   } catch (readError: any) {
     if (readError.code === "ENOENT") {
-      // Config file doesn't exist, prompt user for initial setup
+      // Config file doesn't exist, create minimal default
       try {
         // Initialize directories
         await initDir();
 
-        // Backup existing config file if it exists
-        const backupPath = await backupConfigFile();
-        if (backupPath) {
-          console.log(
-              `Backed up existing configuration file to ${backupPath}`
-          );
-        }
         const config = {
           PORT: 3456,
           Providers: [],
@@ -119,15 +117,11 @@ export const readConfigFile = async () => {
         );
         return config
       } catch (error: any) {
-        console.error(
-            "Failed to create default configuration:",
-            error.message
-        );
+        process.stderr.write(`Failed to create default configuration: ${error.message}\n`);
         process.exit(1);
       }
     } else {
-      console.error(`Failed to read config file at ${CONFIG_FILE}`);
-      console.error("Error details:", readError.message);
+      process.stderr.write(`Failed to read config file at ${CONFIG_FILE}: ${readError.message}\n`);
       process.exit(1);
     }
   }
