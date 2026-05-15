@@ -173,7 +173,7 @@ const METADATA_FIELDS = [
   'repository',
   'license',
   'keywords',
-  'ccrVersion',
+  'agrVersion',
   'source',
   'sourceType',
   'checksum',
@@ -330,7 +330,7 @@ export function extractMetadata(manifest: ManifestFile): PresetMetadata {
   if (manifest.repository !== undefined) metadata.repository = manifest.repository;
   if (manifest.license !== undefined) metadata.license = manifest.license;
   if (manifest.keywords !== undefined) metadata.keywords = manifest.keywords;
-  if (manifest.ccrVersion !== undefined) metadata.ccrVersion = manifest.ccrVersion;
+  if (manifest.agrVersion !== undefined) metadata.agrVersion = manifest.agrVersion;
   if (manifest.source !== undefined) metadata.source = manifest.source;
   if (manifest.sourceType !== undefined) metadata.sourceType = manifest.sourceType;
   if (manifest.checksum !== undefined) metadata.checksum = manifest.checksum;

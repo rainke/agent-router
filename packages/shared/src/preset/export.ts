@@ -7,7 +7,7 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import { sanitizeConfig } from './sensitiveFields';
 import { PresetMetadata, ManifestFile } from './types';
-import { HOME_DIR } from '../constants';
+import { HOME_DIR, AGR_VERSION } from '../constants';
 
 /**
  * Export options
@@ -48,6 +48,7 @@ export function createManifest(
     description: options.description,
     author: options.author,
     keywords: options.tags ? options.tags.split(',').map(t => t.trim()) : undefined,
+    agrVersion: AGR_VERSION,
   };
 
   return {
@@ -75,6 +76,7 @@ export async function exportPreset(
     description: options.description,
     author: options.author,
     keywords: options.tags ? options.tags.split(',').map(t => t.trim()) : undefined,
+    agrVersion: AGR_VERSION,
   };
 
   // 2. Sanitize configuration

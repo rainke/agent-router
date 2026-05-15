@@ -4,7 +4,7 @@
   "description": "多Provider配置示例 - 支持OpenAI和DeepSeek切换",
   "author": "CCR Team",
   "keywords": ["openai", "deepseek", "multi-provider"],
-  "ccrVersion": "2.0.0",
+  "agrVersion": "2.0.0",
   "Providers": [
     {
       "name": "openai",

@@ -67,19 +67,19 @@
 
 ## 3. Preset and Schema Rename
 
-- [ ] 3.1 将 preset schema 从 `ccrVersion` 迁移到 `agrVersion`
+- [x] 3.1 将 preset schema 从 `ccrVersion` 迁移到 `agrVersion`
   - Scope: export/install/read/schema validation/UI 统一写入 `agrVersion`; 取根版本号；不再写 `ccrVersion`。
   - Files: `packages/shared/src/preset/**`, `packages/cli/src/utils/preset/**`, `packages/ui/src/**`.
   - Verify: 导出的 manifest 只有 `agrVersion`; `ccrVersion` 出现次数在 preset 源码中只允许出现在拒绝旧 schema 的错误处理。
   - Covers: R4-2.
 
-- [ ] 3.2 拒绝仅含旧 schema 的 preset
+- [x] 3.2 拒绝仅含旧 schema 的 preset
   - Scope: 读取 preset 时如果只有 `ccrVersion` 且无 `agrVersion`，拒绝应用，不修改配置；UI 显示错误横幅，HTTP 返回 4xx 和迁移提示。
   - Files: shared preset validation, server config API, UI preset flow.
   - Verify: CLI/server/UI 测试覆盖旧 manifest 拒绝路径。
   - Covers: R4-3.
 
-- [ ] 3.3 实现三协议 preset 命名空间解析
+- [x] 3.3 实现三协议 preset 命名空间解析
   - Scope: 识别 `/preset/<name>/v1/messages`, `/preset/<name>/v1/chat/completions`, `/preset/<name>/v1/responses`; preset 名仅允许 `[a-zA-Z0-9_-]` 长度 1-64；非法名称不访问文件系统。
   - Files: `packages/core/src/server.ts`, `packages/core/src/api/routes.ts`, namespace registration.
   - Verify: 合法三路径进入同一 preset namespace；非法名称 404；不存在 preset 404 且提示 `preset not found`。

@@ -134,7 +134,7 @@ export interface PresetMetadata {
   repository?: string;            // Source repository
   license?: string;               // License
   keywords?: string[];            // Keywords
-  ccrVersion?: string;            // Compatible CCR version
+  agrVersion?: string;            // Compatible Agent Router version
   source?: string;                // Preset source URL
   sourceType?: 'local' | 'gist' | 'registry';
   checksum?: string;              // Preset content checksum
@@ -225,7 +225,7 @@ export interface PresetIndexEntry {
   url: string;                    // Download address
   repo?: string;                  // Repository (e.g., 'owner/repo')
   checksum?: string;              // SHA256 checksum
-  ccrVersion?: string;            // Compatible version
+  agrVersion?: string;            // Compatible Agent Router version
 }
 
 // Online preset repository index

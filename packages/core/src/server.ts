@@ -60,6 +60,17 @@ function createApp(options: FastifyServerOptions = {}): FastifyInstance {
   // Register error handler
   fastify.setErrorHandler(errorHandler);
 
+  // Custom 404 handler for preset paths
+  fastify.setNotFoundHandler((req, reply) => {
+    const url = new URL(`http://127.0.0.1${req.url}`);
+    const pathname = url.pathname;
+    if (pathname.startsWith("/preset/")) {
+      reply.status(404).send({ error: "preset not found" });
+    } else {
+      reply.status(404).send({ error: "Not Found", message: `Route ${req.method}:${pathname} not found` });
+    }
+  });
+
   // Register CORS
   fastify.register(cors);
   return fastify;
@@ -140,10 +151,11 @@ class Server {
         fastify.decorate('transformerService', this.transformerService);
         fastify.decorate('providerService', this.providerService);
         fastify.decorate('tokenizerService', this.tokenizerService);
-        // Add router hook for main namespace
+        // Add router hook for main namespace (all three protocols)
         fastify.addHook('preHandler', async (req: any, reply: any) => {
           const url = new URL(`http://127.0.0.1${req.url}`);
-          if (url.pathname.endsWith("/v1/messages")) {
+          const pathname = url.pathname;
+          if (pathname.endsWith("/v1/messages") || pathname.endsWith("/v1/chat/completions") || pathname.endsWith("/v1/responses")) {
             await router(req, reply, {
               configService: this.configService,
               tokenizerService: this.tokenizerService,
@@ -181,10 +193,11 @@ class Server {
       fastify.decorate('transformerService', transformerService);
       fastify.decorate('providerService', providerService);
       fastify.decorate('tokenizerService', tokenizerService);
-      // Add router hook for namespace
+      // Add router hook for namespace (all three protocols)
       fastify.addHook('preHandler', async (req: any, reply: any) => {
         const url = new URL(`http://127.0.0.1${req.url}`);
-        if (url.pathname.endsWith("/v1/messages")) {
+        const pathname = url.pathname;
+        if (pathname.endsWith("/v1/messages") || pathname.endsWith("/v1/chat/completions") || pathname.endsWith("/v1/responses")) {
           await router(req, reply, {
             configService,
             tokenizerService,

@@ -42,7 +42,7 @@ Preset 是一个预定义的配置包，用于快速配置 Claude Code Router。
   "repository": "https://github.com/user/repo",
   "license": "MIT",
   "keywords": ["openai", "production"],
-  "ccrVersion": "2.0.0",
+  "agrVersion": "2.0.0",
 
   // === 配置字段 ===
   "Providers": [...],
@@ -80,7 +80,7 @@ Preset 是一个预定义的配置包，用于快速配置 Claude Code Router。
 | `repository` | string | 源代码仓库 URL |
 | `license` | string | 许可证类型 |
 | `keywords` | string[] | 关键词标签 |
-| `ccrVersion` | string | 兼容的 CCR 版本 |
+| `agrVersion` | string | 兼容的 Agent Router 版本 |
 | `source` | string | Preset 来源 URL |
 | `sourceType` | string | 来源类型（`local`/`gist`/`registry`） |
 | `checksum` | string | 内容校验和（SHA256） |
@@ -97,7 +97,7 @@ Preset 是一个预定义的配置包，用于快速配置 Claude Code Router。
   "repository": "https://github.com/yourname/ccr-presets.git",
   "license": "MIT",
   "keywords": ["openai", "production", "proxy"],
-  "ccrVersion": "2.0.0"
+  "agrVersion": "2.0.0"
 }
 ```
 
@@ -673,7 +673,7 @@ $VARIABLE_NAME
   "description": "多 Provider 高级配置，支持动态选择和代理",
   "author": "Your Name",
   "keywords": ["openai", "deepseek", "proxy", "multi-provider"],
-  "ccrVersion": "2.0.0",
+  "agrVersion": "2.0.0",
 
   "schema": [
     {

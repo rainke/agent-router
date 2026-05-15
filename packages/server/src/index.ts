@@ -188,8 +188,13 @@ async function getServer(options: RunOptions = {}) {
     logger: loggerConfig,
   });
 
+  // Preset name validation regex: only [a-zA-Z0-9_-], length 1-64
+  const VALID_PRESET_NAME = /^[a-zA-Z0-9_-]{1,64}$/;
+
   await Promise.allSettled(
-      presets.map(async preset => await serverInstance.registerNamespace(`/preset/${preset.name}`, preset.config))
+      presets
+        .filter(preset => VALID_PRESET_NAME.test(preset.name))
+        .map(async preset => await serverInstance.registerNamespace(`/preset/${preset.name}`, preset.config))
   )
 
   // Register and configure plugins from config
@@ -209,8 +214,24 @@ async function getServer(options: RunOptions = {}) {
   serverInstance.addHook("preHandler", async (req: any, reply: any) => {
     const url = new URL(`http://127.0.0.1${req.url}`);
     req.pathname = url.pathname;
-    if (req.pathname.endsWith("/v1/messages") && req.pathname !== "/v1/messages") {
-      req.preset = req.pathname.replace("/v1/messages", "").replace("/", "");
+
+    // Extract preset name from three protocol paths
+    const protocolSuffixes = ["/v1/messages", "/v1/chat/completions", "/v1/responses"];
+    for (const suffix of protocolSuffixes) {
+      if (req.pathname.endsWith(suffix) && req.pathname !== suffix) {
+        const presetPath = req.pathname.slice(0, -suffix.length);
+        // Remove leading slash to get preset name (e.g., "/preset/my-preset" -> "preset/my-preset")
+        const presetName = presetPath.replace(/^\/preset\//, "");
+        // Validate preset name: only [a-zA-Z0-9_-], length 1-64
+        if (/^[a-zA-Z0-9_-]{1,64}$/.test(presetName)) {
+          req.preset = presetName;
+        } else if (presetPath.startsWith("/preset/")) {
+          // Invalid preset name in a preset path - return 404 without filesystem access
+          reply.status(404).send({ error: "Invalid preset name" });
+          return;
+        }
+        break;
+      }
     }
   })
 

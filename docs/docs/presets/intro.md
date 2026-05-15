@@ -217,7 +217,7 @@ For complex configuration needs, use `configMappings` to precisely control value
   "description": "Multi-provider configuration example - Switch between OpenAI and DeepSeek",
   "author": "CCR Team",
   "keywords": ["openai", "deepseek", "multi-provider"],
-  "ccrVersion": "2.0.0",
+  "agrVersion": "2.0.0",
   "schema": [
     {
       "id": "primaryProvider",
@@ -337,7 +337,7 @@ These fields describe basic information about the preset:
 | `repository` | string | - | Source repository URL |
 | `license` | string | - | License type |
 | `keywords` | string[] | - | Keyword tags |
-| `ccrVersion` | string | - | Compatible CCR version |
+| `agrVersion` | string | - | Compatible Agent Router version |
 
 Example:
 
@@ -351,7 +351,7 @@ Example:
   "repository": "https://github.com/yourname/ccr-presets.git",
   "license": "MIT",
   "keywords": ["openai", "production"],
-  "ccrVersion": "2.0.0"
+  "agrVersion": "2.0.0"
 }
 ```
 

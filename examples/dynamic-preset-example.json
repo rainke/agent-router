@@ -5,7 +5,7 @@
     "description": "示例预设：支持多provider选择和动态配置",
     "author": "CCR Team",
     "keywords": ["example", "multi-provider", "dynamic"],
-    "ccrVersion": "2.0.0"
+    "agrVersion": "2.0.0"
   },
   "schema": [
     {

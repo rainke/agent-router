@@ -1,6 +1,9 @@
 import path from "node:path";
 import os from "node:os";
 
+// Agent Router version (from package.json)
+export const AGR_VERSION = "2.0.0";
+
 export const HOME_DIR = path.join(os.homedir(), ".agent-router");
 
 export const CONFIG_FILE = path.join(HOME_DIR, "config.json");

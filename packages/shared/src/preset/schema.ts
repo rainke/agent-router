@@ -672,7 +672,7 @@ export function loadConfigFromManifest(manifest: ManifestFile, presetDir?: strin
       repository: manifest.repository,
       license: manifest.license,
       keywords: manifest.keywords,
-      ccrVersion: manifest.ccrVersion,
+      agrVersion: manifest.agrVersion,
       source: manifest.source,
       sourceType: manifest.sourceType,
       checksum: manifest.checksum,
@@ -686,7 +686,7 @@ export function loadConfigFromManifest(manifest: ManifestFile, presetDir?: strin
   // Extract configuration section from manifest (exclude metadata and dynamic configuration fields)
   const METADATA_FIELDS = [
     'name', 'version', 'description', 'author', 'homepage', 'repository',
-    'license', 'keywords', 'ccrVersion', 'source', 'sourceType', 'checksum',
+    'license', 'keywords', 'agrVersion', 'source', 'sourceType', 'checksum',
   ];
   const DYNAMIC_CONFIG_FIELDS = ['schema', 'template', 'configMappings', 'userValues'];
 

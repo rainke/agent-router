@@ -246,7 +246,7 @@ export const createServer = async (config: any): Promise<any> => {
             repository: metadata.repository,
             license: metadata.license,
             keywords: metadata.keywords,
-            ccrVersion: metadata.ccrVersion,
+            agrVersion: metadata.agrVersion,
             source: metadata.source,
             sourceType: metadata.sourceType,
             checksum: metadata.checksum,
@@ -276,6 +276,7 @@ export const createServer = async (config: any): Promise<any> => {
       }
 
       const manifest = await readManifestFromDir(presetDir);
+
       const presetFile = manifestToPresetFile(manifest);
 
       // Return preset info, config uses the applied userValues configuration
