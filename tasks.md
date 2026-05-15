@@ -47,7 +47,7 @@
 
 ## 2. Runtime Paths, Init, Logging, and No Legacy Migration
 
-- [ ] 2.1 统一 Home_Dir 与运行态路径
+- [x] 2.1 统一 Home_Dir 与运行态路径
   - Scope: `HOME_DIR` 改为 `~/.agent-router`; `CONFIG_FILE`, `PID_FILE`, presets, plugins, logs 都从 `HOME_DIR` 派生；引用计数文件改为 tmp 下 `agent-router-reference-count.txt`。
   - Files: `packages/shared/src/constants.ts`, CLI/server path consumers.
   - Verify: 不存在硬编码 `~/.claude-code-router` 运行时读取路径；路径单测通过。

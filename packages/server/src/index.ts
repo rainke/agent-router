@@ -134,7 +134,7 @@ async function getServer(options: RunOptions = {}) {
     const hour = pad(date.getHours());
     const minute = pad(date.getMinutes());
 
-    return `./logs/ccr-${month}${day}${hour}${minute}${pad(date.getSeconds())}${index ? `_${index}` : ''}.log`;
+    return `./logs/agr-${month}${day}${hour}${minute}${pad(date.getSeconds())}${index ? `_${index}` : ''}.log`;
   };
 
   let loggerConfig: any;
@@ -175,8 +175,8 @@ async function getServer(options: RunOptions = {}) {
       PORT: servicePort,
       LOG_FILE: join(
         homedir(),
-        ".claude-code-router",
-        "claude-code-router.log"
+        ".agent-router",
+        "agent-router.log"
       ),
     },
     logger: loggerConfig,

@@ -79,7 +79,7 @@ export async function installPresetFromMarket(presetName: string): Promise<{ nam
   if (!marketPreset) {
     throw new Error(
       `Preset '${presetName}' not found in marketplace. ` +
-      `Please check the available presets at: https://github.com/claude-code-router/presets`
+      `Please check the available presets at: https://github.com/agent-router/presets`
     );
   }
 

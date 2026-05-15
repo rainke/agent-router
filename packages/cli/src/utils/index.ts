@@ -112,7 +112,7 @@ export const readConfigFile = async () => {
         // Create a minimal default config file
         await writeConfigFile(config);
         console.log(
-            "Created minimal default configuration file at ~/.claude-code-router/config.json"
+            "Created minimal default configuration file at ~/.agent-router/config.json"
         );
         console.log(
             "Please edit this file with your actual configuration."
@@ -186,7 +186,7 @@ export const initConfig = async () => {
 export const run = async (args: string[] = []) => {
   const isRunning = isServiceRunning()
   if (isRunning) {
-    console.log('claude-code-router server is running');
+    console.log('agent-router server is running');
     return;
   }
   const server = await getServer();

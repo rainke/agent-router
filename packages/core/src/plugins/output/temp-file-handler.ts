@@ -8,7 +8,7 @@ import { tmpdir } from 'os';
  */
 export interface TempFileOutputConfig {
   /**
-   * Subdirectory under system temp directory (default: 'claude-code-router')
+   * Subdirectory under system temp directory (default: 'agent-router')
    */
   subdirectory?: string;
 
@@ -39,7 +39,7 @@ export class TempFileOutputHandler implements OutputHandler {
 
   constructor(config: TempFileOutputConfig = {}) {
     this.config = {
-      subdirectory: 'claude-code-router',
+      subdirectory: 'agent-router',
       extension: 'json',
       includeTimestamp: false,
       prefix: 'session',

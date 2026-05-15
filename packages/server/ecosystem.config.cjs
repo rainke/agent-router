@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: 'claude-code-router-server',
+      name: 'agent-router-server',
       script: '/app/packages/server/dist/index.js',
       cwd: '/app/packages/server',
       instances: 1,
@@ -12,8 +12,8 @@ module.exports = {
         NODE_ENV: 'production',
       },
       // 日志配置
-      error_file: '/root/.claude-code-router/logs/error.log',
-      out_file: '/root/.claude-code-router/logs/out.log',
+      error_file: '/root/.agent-router/logs/error.log',
+      out_file: '/root/.agent-router/logs/out.log',
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
       merge_logs: true,
       // 启用日志时间戳
