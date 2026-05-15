@@ -129,12 +129,14 @@ async function getServer(options: RunOptions = {}) {
       date = time;
     }
 
-    const month = date.getFullYear() + "" + pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
     const day = pad(date.getDate());
     const hour = pad(date.getHours());
     const minute = pad(date.getMinutes());
+    const second = pad(date.getSeconds());
 
-    return `./logs/agr-${month}${day}${hour}${minute}${pad(date.getSeconds())}${index ? `_${index}` : ''}.log`;
+    return `./logs/agr-${year}${month}${day}-${hour}${minute}${second}${index ? `_${index}` : ''}.log`;
   };
 
   let loggerConfig: any;
@@ -149,16 +151,21 @@ async function getServer(options: RunOptions = {}) {
       if (config.LOG === undefined) {
         config.LOG = true;
       }
-      loggerConfig = {
-        level: config.LOG_LEVEL || "debug",
-        stream: createStream(generator, {
-          path: HOME_DIR,
-          maxFiles: 3,
-          interval: "1d",
-          compress: false,
-          maxSize: "50M"
-        }),
-      };
+      try {
+        loggerConfig = {
+          level: config.LOG_LEVEL || "debug",
+          stream: createStream(generator, {
+            path: HOME_DIR,
+            maxFiles: 3,
+            interval: "1d",
+            compress: false,
+            maxSize: "50M"
+          }),
+        };
+      } catch (logError: any) {
+        process.stderr.write(`Failed to create log file: ${logError.message}\n`);
+        process.exit(1);
+      }
     } else {
       loggerConfig = false;
     }
@@ -174,8 +181,7 @@ async function getServer(options: RunOptions = {}) {
       HOST: HOST,
       PORT: servicePort,
       LOG_FILE: join(
-        homedir(),
-        ".agent-router",
+        HOME_DIR,
         "agent-router.log"
       ),
     },

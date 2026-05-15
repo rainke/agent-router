@@ -59,7 +59,7 @@
   - Verify: 使用临时 HOME 覆盖成功/失败路径；不会读取或拷贝旧目录。
   - Covers: R3-2, R3-3, R3-4, R3-5.
 
-- [ ] 2.3 更新日志和临时 settings 文件路径
+- [x] 2.3 更新日志和临时 settings 文件路径
   - Scope: server rolling log 写到 `~/.agent-router/logs/agr-YYYYMMDD-HHmmss.log`; 创建失败 3 秒内 stderr + 非零退出；Claude settings 临时文件写入 `<tmp>/agent-router/agr-settings-<hash>.json`。
   - Files: `packages/server/src/**`, `packages/cli/src/utils/**`.
   - Verify: 日志文件名格式测试；tmp settings hash 长度与字符集测试；目录不存在时递归创建。
