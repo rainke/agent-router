@@ -15,7 +15,8 @@ import JSON5 from "json5";
 import { IAgent, ITool } from "./agents/type";
 import agentsManager from "./agents";
 import { EventEmitter } from "node:events";
-import { pluginManager, tokenSpeedPlugin } from "@musistudio/llms";
+import { pluginManager, tokenSpeedPlugin, detectApiProtocol } from "@musistudio/llms";
+import type { API_Protocol } from "@musistudio/llms";
 
 const event = new EventEmitter()
 
@@ -236,7 +237,7 @@ async function getServer(options: RunOptions = {}) {
   })
 
   serverInstance.addHook("preHandler", async (req: any, reply: any) => {
-    if (req.pathname.endsWith("/v1/messages")) {
+    if (req.apiProtocol === 'anthropic') {
       const useAgents = []
 
       for (const agent of agentsManager.getAllAgents()) {
@@ -272,7 +273,7 @@ async function getServer(options: RunOptions = {}) {
     event.emit('onError', request, reply, error);
   })
   serverInstance.addHook("onSend", (req: any, reply: any, payload: any, done: any) => {
-    if (req.sessionId && req.pathname.endsWith("/v1/messages")) {
+    if (req.sessionId && req.apiProtocol === 'anthropic') {
       if (payload instanceof ReadableStream) {
         if (req.agents) {
           const abortController = new AbortController();

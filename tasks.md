@@ -87,13 +87,13 @@
 
 ## 4. Protocol Detection and Request Normalization
 
-- [ ] 4.1 新增 `API_Protocol` 类型和请求装饰器
+- [x] 4.1 新增 `API_Protocol` 类型和请求装饰器
   - Scope: 为 Fastify request 增加 `req.apiProtocol`; 在 `preHandler` 且早于 router 前完成检测，生命周期内不修改。
   - Files: `packages/server/src/types.d.ts`, `packages/core/src/**` type declarations and hooks.
   - Verify: 三种 API 路径和 passthrough 路径都能观察到正确协议。
   - Covers: R5-1, R5-8.
 
-- [ ] 4.2 实现纯函数 `detectApiProtocol(pathname)`
+- [x] 4.2 实现纯函数 `detectApiProtocol(pathname)`
   - Scope: 匹配 `/v1/messages`, `/v1/chat/completions`, `/v1/responses` 及尾斜杠；Responses 不匹配严格子路径；优先级 anthropic -> chat -> responses；异常输入返回 passthrough。
   - Files: new utility under `packages/core/src/utils/**` or shared utility if needed.
   - Verify: 表驱动测试 + 属性测试覆盖 0-8192 字符、确定性和四选一输出。

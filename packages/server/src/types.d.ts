@@ -35,6 +35,10 @@ declare module "@musistudio/llms" {
     output_tokens: number;
   }
 
+  export type API_Protocol = 'anthropic' | 'openai-chat' | 'openai-responses' | 'passthrough';
+
+  export function detectApiProtocol(pathname: string | null | undefined): API_Protocol;
+
   export const sessionUsageCache: any;
 
   // Export router

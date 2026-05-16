@@ -33,6 +33,7 @@ import { TransformerService } from "./services/transformer";
 import { TokenizerService } from "./services/tokenizer";
 import { router, calculateTokenCount, searchProjectBySession } from "./utils/router";
 import { sessionUsageCache } from "./utils/cache";
+import { API_Protocol, detectApiProtocol } from "./utils/protocol";
 
 // Extend FastifyRequest to include custom properties
 declare module "fastify" {
@@ -40,6 +41,7 @@ declare module "fastify" {
     provider?: string;
     model?: string;
     scenarioType?: string;
+    apiProtocol?: API_Protocol;
   }
   interface FastifyInstance {
     _server?: Server;
@@ -153,9 +155,7 @@ class Server {
         fastify.decorate('tokenizerService', this.tokenizerService);
         // Add router hook for main namespace (all three protocols)
         fastify.addHook('preHandler', async (req: any, reply: any) => {
-          const url = new URL(`http://127.0.0.1${req.url}`);
-          const pathname = url.pathname;
-          if (pathname.endsWith("/v1/messages") || pathname.endsWith("/v1/chat/completions") || pathname.endsWith("/v1/responses")) {
+          if (req.apiProtocol !== 'passthrough') {
             await router(req, reply, {
               configService: this.configService,
               tokenizerService: this.tokenizerService,
@@ -195,9 +195,7 @@ class Server {
       fastify.decorate('tokenizerService', tokenizerService);
       // Add router hook for namespace (all three protocols)
       fastify.addHook('preHandler', async (req: any, reply: any) => {
-        const url = new URL(`http://127.0.0.1${req.url}`);
-        const pathname = url.pathname;
-        if (pathname.endsWith("/v1/messages") || pathname.endsWith("/v1/chat/completions") || pathname.endsWith("/v1/responses")) {
+        if (req.apiProtocol !== 'passthrough') {
           await router(req, reply, {
             configService,
             tokenizerService,
@@ -212,9 +210,11 @@ class Server {
     try {
       this.app._server = this;
 
-      this.app.addHook("preHandler", (req, reply, done) => {
+      // Detect API protocol for all requests (runs before namespace hooks)
+      this.app.addHook("preHandler", (req: any, reply: any, done: () => void) => {
         const url = new URL(`http://127.0.0.1${req.url}`);
-        if (url.pathname.endsWith("/v1/messages") && req.body) {
+        req.apiProtocol = detectApiProtocol(url.pathname);
+        if (req.apiProtocol === 'anthropic' && req.body) {
           const body = req.body as any;
           req.log.info({ data: body, type: "request body" });
           if (!body.stream) {
@@ -228,9 +228,8 @@ class Server {
 
       this.app.addHook(
         "preHandler",
-        async (req: FastifyRequest, reply: FastifyReply) => {
-          const url = new URL(`http://127.0.0.1${req.url}`);
-          if (url.pathname.endsWith("/v1/messages") && req.body) {
+        async (req: any, reply: any) => {
+          if (req.apiProtocol !== 'passthrough' && req.body) {
             try {
               const body = req.body as any;
               if (!body || !body.model) {
@@ -280,6 +279,8 @@ export { sessionUsageCache };
 export { router };
 export { calculateTokenCount };
 export { searchProjectBySession };
+export { detectApiProtocol } from "./utils/protocol";
+export type { API_Protocol } from "./utils/protocol";
 export type { RouterScenarioType, RouterFallbackConfig } from "./utils/router";
 export { ConfigService } from "./services/config";
 export { ProviderService } from "./services/provider";
