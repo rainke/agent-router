@@ -39,6 +39,17 @@ declare module "@musistudio/llms" {
 
   export function detectApiProtocol(pathname: string | null | undefined): API_Protocol;
 
+  export interface NormalizedRequest {
+    sessionId?: string;
+    system: Array<{ type: string; text?: string }>;
+    thinking?: any;
+    tools: any[];
+    hasWebSearch: boolean;
+    protocol: API_Protocol;
+  }
+
+  export function normalizeRequestBody(req: any): NormalizedRequest;
+
   export const sessionUsageCache: any;
 
   // Export router

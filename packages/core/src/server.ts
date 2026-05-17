@@ -34,6 +34,7 @@ import { TokenizerService } from "./services/tokenizer";
 import { router, calculateTokenCount, searchProjectBySession } from "./utils/router";
 import { sessionUsageCache } from "./utils/cache";
 import { API_Protocol, detectApiProtocol } from "./utils/protocol";
+import { normalizeRequestBody, NormalizedRequest } from "./utils/normalizer";
 
 // Extend FastifyRequest to include custom properties
 declare module "fastify" {
@@ -281,6 +282,8 @@ export { calculateTokenCount };
 export { searchProjectBySession };
 export { detectApiProtocol } from "./utils/protocol";
 export type { API_Protocol } from "./utils/protocol";
+export { normalizeRequestBody } from "./utils/normalizer";
+export type { NormalizedRequest } from "./utils/normalizer";
 export type { RouterScenarioType, RouterFallbackConfig } from "./utils/router";
 export { ConfigService } from "./services/config";
 export { ProviderService } from "./services/provider";

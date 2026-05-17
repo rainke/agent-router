@@ -99,7 +99,7 @@
   - Verify: 表驱动测试 + 属性测试覆盖 0-8192 字符、确定性和四选一输出。
   - Covers: R5-2, R5-3, R5-4, R5-5, R5-6, R5-7, R5-9, R18-1.
 
-- [ ] 4.3 实现 `normalizeRequestBody(req)`
+- [x] 4.3 实现 `normalizeRequestBody(req)`
   - Scope: 统一提取 `sessionId`, `system`, `thinking`, `tools`, `hasWebSearch`, `protocol`; 对畸形 body 和未知协议不抛错。
   - Files: new normalizer utility, associated types.
   - Verify: 三协议表驱动测试；属性测试覆盖幂等和畸形输入不抛异常。
