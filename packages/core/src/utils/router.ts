@@ -202,26 +202,16 @@ function extractAndRemoveSubagentTag(req: any, normalized: NormalizedRequest): s
   const protocol = normalized.protocol;
 
   if (protocol === 'anthropic') {
-    // Anthropic: system[1].text pattern (legacy behavior adapted for new tag)
+    // Anthropic: search system array in ascending index order, remove first match
     const system = req.body?.system;
-    if (Array.isArray(system) && system.length > 1 && typeof system[1]?.text === 'string') {
-      const match = system[1].text.match(tagRegex);
-      if (match) {
-        system[1].text = system[1].text.replace(tagRegex, '');
-        return match[1];
-      }
-    }
-    // Also check normalized system array for the tag in any element
-    for (let i = 0; i < normalized.system.length; i++) {
-      const item = normalized.system[i];
-      if (typeof item.text === 'string') {
-        const match = item.text.match(tagRegex);
-        if (match) {
-          // Remove from original body location
-          if (Array.isArray(system) && system[i] && typeof system[i].text === 'string') {
+    if (Array.isArray(system)) {
+      for (let i = 0; i < system.length; i++) {
+        if (typeof system[i]?.text === 'string') {
+          const match = system[i].text.match(tagRegex);
+          if (match) {
             system[i].text = system[i].text.replace(tagRegex, '');
+            return match[1];
           }
-          return match[1];
         }
       }
     }

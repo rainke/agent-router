@@ -427,7 +427,7 @@ describe("router — AGR-SUBAGENT-MODEL tag extraction", () => {
     expect(req.body.input[0].content).toBe("System hint");
   });
 
-  it("does NOT recognize old CCR-SUBAGENT-MODEL tag", async () => {
+  it("does NOT recognize old CCR-SUBAGENT-MODEL tag (anthropic)", async () => {
     const req = makeAnthropicReq({
       model: "claude-sonnet-4-20250514",
       system: [
@@ -443,6 +443,332 @@ describe("router — AGR-SUBAGENT-MODEL tag extraction", () => {
     expect(req.body.model).toBe("p,default-m");
     // Old tag should NOT be removed from the text
     expect(req.body.system[1].text).toContain("<CCR-SUBAGENT-MODEL>");
+  });
+
+  it("does NOT recognize old CCR-SUBAGENT-MODEL tag (openai-chat)", async () => {
+    const req = makeOpenAIChatReq({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "<CCR-SUBAGENT-MODEL>my-provider,my-model</CCR-SUBAGENT-MODEL>" },
+        { role: "user", content: "Hello" },
+      ],
+    });
+    const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,default-m");
+    expect(req.body.messages[0].content).toContain("<CCR-SUBAGENT-MODEL>");
+  });
+
+  it("does NOT recognize old CCR-SUBAGENT-MODEL tag (openai-responses instructions)", async () => {
+    const req = makeOpenAIResponsesReq({
+      model: "gpt-4o",
+      instructions: "<CCR-SUBAGENT-MODEL>my-provider,my-model</CCR-SUBAGENT-MODEL>",
+    });
+    const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,default-m");
+    expect(req.body.instructions).toContain("<CCR-SUBAGENT-MODEL>");
+  });
+
+  it("does NOT recognize old CCR-SUBAGENT-MODEL tag (openai-responses input system)", async () => {
+    const req = makeOpenAIResponsesReq({
+      model: "gpt-4o",
+      instructions: "Main instructions",
+      input: [
+        { role: "system", content: "<CCR-SUBAGENT-MODEL>my-provider,my-model</CCR-SUBAGENT-MODEL>" },
+        { role: "user", content: "Hello" },
+      ],
+    });
+    const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,default-m");
+    expect(req.body.input[0].content).toContain("<CCR-SUBAGENT-MODEL>");
+  });
+});
+
+// ── Subagent tag round-trip property tests ──────────────────────────────
+
+describe("router — AGR-SUBAGENT-MODEL round-trip properties", () => {
+  // R7-9: For all system prompts containing exactly one tag
+  // <AGR-SUBAGENT-MODEL>m</AGR-SUBAGENT-MODEL> where m contains no '<',
+  // after extraction the new system prompt shall not contain the tag substring,
+  // and the returned model equals m.
+
+  const models = [
+    "provider,model",
+    "openai,gpt-4o",
+    "anthropic,claude-opus-4-20250514",
+    "my-provider,my-model",
+    "a,b",
+    "deepseek,deepseek-r1",
+  ];
+
+  describe("anthropic round-trip", () => {
+    for (const m of models) {
+      it(`model="${m}" — tag removed, model extracted`, async () => {
+        const prefix = "Some prefix text ";
+        const suffix = " some suffix";
+        const tagText = `<AGR-SUBAGENT-MODEL>${m}</AGR-SUBAGENT-MODEL>`;
+        const fullText = `${prefix}${tagText}${suffix}`;
+
+        const req = makeAnthropicReq({
+          model: "claude-sonnet-4-20250514",
+          system: [
+            { type: "text", text: "Main prompt" },
+            { type: "text", text: fullText },
+          ],
+        });
+        const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+        await router(req, {}, context);
+
+        expect(req.body.model).toBe(m);
+        expect(req.body.system[1].text).not.toContain("<AGR-SUBAGENT-MODEL>");
+        expect(req.body.system[1].text).toBe(`${prefix}${suffix}`);
+      });
+    }
+  });
+
+  describe("openai-chat round-trip", () => {
+    for (const m of models) {
+      it(`model="${m}" — tag removed, model extracted`, async () => {
+        const prefix = "System prefix ";
+        const suffix = " system suffix";
+        const tagText = `<AGR-SUBAGENT-MODEL>${m}</AGR-SUBAGENT-MODEL>`;
+        const fullContent = `${prefix}${tagText}${suffix}`;
+
+        const req = makeOpenAIChatReq({
+          model: "gpt-4o",
+          messages: [
+            { role: "system", content: fullContent },
+            { role: "user", content: "Hello" },
+          ],
+        });
+        const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+        await router(req, {}, context);
+
+        expect(req.body.model).toBe(m);
+        expect(req.body.messages[0].content).not.toContain("<AGR-SUBAGENT-MODEL>");
+        expect(req.body.messages[0].content).toBe(`${prefix}${suffix}`);
+      });
+    }
+  });
+
+  describe("openai-responses instructions round-trip", () => {
+    for (const m of models) {
+      it(`model="${m}" — tag removed from instructions, model extracted`, async () => {
+        const prefix = "Instructions prefix ";
+        const suffix = " instructions suffix";
+        const tagText = `<AGR-SUBAGENT-MODEL>${m}</AGR-SUBAGENT-MODEL>`;
+        const fullInstructions = `${prefix}${tagText}${suffix}`;
+
+        const req = makeOpenAIResponsesReq({
+          model: "gpt-4o",
+          instructions: fullInstructions,
+        });
+        const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+        await router(req, {}, context);
+
+        expect(req.body.model).toBe(m);
+        expect(req.body.instructions).not.toContain("<AGR-SUBAGENT-MODEL>");
+        expect(req.body.instructions).toBe(`${prefix}${suffix}`);
+      });
+    }
+  });
+
+  describe("openai-responses input system round-trip", () => {
+    for (const m of models) {
+      it(`model="${m}" — tag removed from input system, model extracted`, async () => {
+        const prefix = "System hint prefix ";
+        const suffix = " system hint suffix";
+        const tagText = `<AGR-SUBAGENT-MODEL>${m}</AGR-SUBAGENT-MODEL>`;
+        const fullContent = `${prefix}${tagText}${suffix}`;
+
+        const req = makeOpenAIResponsesReq({
+          model: "gpt-4o",
+          instructions: "Main instructions",
+          input: [
+            { role: "system", content: fullContent },
+            { role: "user", content: "Hello" },
+          ],
+        });
+        const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+        await router(req, {}, context);
+
+        expect(req.body.model).toBe(m);
+        expect(req.body.input[0].content).not.toContain("<AGR-SUBAGENT-MODEL>");
+        expect(req.body.input[0].content).toBe(`${prefix}${suffix}`);
+      });
+    }
+  });
+
+  describe("only first match is removed (ascending index)", () => {
+    it("anthropic: only first occurrence in system is extracted", async () => {
+      const req = makeAnthropicReq({
+        model: "claude-sonnet-4-20250514",
+        system: [
+          { type: "text", text: "<AGR-SUBAGENT-MODEL>first,match</AGR-SUBAGENT-MODEL>Text1" },
+          { type: "text", text: "<AGR-SUBAGENT-MODEL>second,match</AGR-SUBAGENT-MODEL>Text2" },
+        ],
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      // First match should be extracted
+      expect(req.body.model).toBe("first,match");
+      // First element should have tag removed
+      expect(req.body.system[0].text).not.toContain("<AGR-SUBAGENT-MODEL>");
+      expect(req.body.system[0].text).toBe("Text1");
+      // Second element should still contain its tag
+      expect(req.body.system[1].text).toContain("<AGR-SUBAGENT-MODEL>");
+    });
+
+    it("openai-chat: only first system message with tag is extracted", async () => {
+      const req = makeOpenAIChatReq({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "<AGR-SUBAGENT-MODEL>first,match</AGR-SUBAGENT-MODEL>Sys1" },
+          { role: "system", content: "<AGR-SUBAGENT-MODEL>second,match</AGR-SUBAGENT-MODEL>Sys2" },
+          { role: "user", content: "Hello" },
+        ],
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("first,match");
+      expect(req.body.messages[0].content).not.toContain("<AGR-SUBAGENT-MODEL>");
+      expect(req.body.messages[1].content).toContain("<AGR-SUBAGENT-MODEL>");
+    });
+
+    it("openai-responses: instructions takes priority over input system", async () => {
+      const req = makeOpenAIResponsesReq({
+        model: "gpt-4o",
+        instructions: "<AGR-SUBAGENT-MODEL>from-instructions,model</AGR-SUBAGENT-MODEL>Instructions",
+        input: [
+          { role: "system", content: "<AGR-SUBAGENT-MODEL>from-input,model</AGR-SUBAGENT-MODEL>Hint" },
+          { role: "user", content: "Hello" },
+        ],
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("from-instructions,model");
+      expect(req.body.instructions).not.toContain("<AGR-SUBAGENT-MODEL>");
+      // Input system tag should still be present (not removed since instructions was first)
+      expect(req.body.input[0].content).toContain("<AGR-SUBAGENT-MODEL>");
+    });
+  });
+
+  describe("no tag present — no side effects", () => {
+    it("anthropic: body unchanged when no AGR tag", async () => {
+      const req = makeAnthropicReq({
+        model: "claude-sonnet-4-20250514",
+        system: [
+          { type: "text", text: "Main prompt" },
+          { type: "text", text: "No subagent tag here" },
+        ],
+      });
+      const originalSystem1 = req.body.system[1].text;
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("p,default-m");
+      expect(req.body.system[1].text).toBe(originalSystem1);
+    });
+
+    it("openai-chat: body unchanged when no AGR tag", async () => {
+      const req = makeOpenAIChatReq({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "No subagent tag here" },
+          { role: "user", content: "Hello" },
+        ],
+      });
+      const originalContent = req.body.messages[0].content;
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("p,default-m");
+      expect(req.body.messages[0].content).toBe(originalContent);
+    });
+
+    it("openai-responses: body unchanged when no AGR tag", async () => {
+      const req = makeOpenAIResponsesReq({
+        model: "gpt-4o",
+        instructions: "No subagent tag here",
+      });
+      const originalInstructions = req.body.instructions;
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("p,default-m");
+      expect(req.body.instructions).toBe(originalInstructions);
+    });
+  });
+
+  describe("old CCR tag is preserved alongside new AGR tag", () => {
+    it("anthropic: AGR tag extracted, CCR tag preserved in text", async () => {
+      const req = makeAnthropicReq({
+        model: "claude-sonnet-4-20250514",
+        system: [
+          { type: "text", text: "Main prompt" },
+          { type: "text", text: "<CCR-SUBAGENT-MODEL>old,model</CCR-SUBAGENT-MODEL><AGR-SUBAGENT-MODEL>new,model</AGR-SUBAGENT-MODEL>Remaining" },
+        ],
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("new,model");
+      expect(req.body.system[1].text).toContain("<CCR-SUBAGENT-MODEL>");
+      expect(req.body.system[1].text).not.toContain("<AGR-SUBAGENT-MODEL>");
+    });
+
+    it("openai-chat: AGR tag extracted, CCR tag preserved", async () => {
+      const req = makeOpenAIChatReq({
+        model: "gpt-4o",
+        messages: [
+          { role: "system", content: "<CCR-SUBAGENT-MODEL>old,model</CCR-SUBAGENT-MODEL><AGR-SUBAGENT-MODEL>new,model</AGR-SUBAGENT-MODEL>Remaining" },
+          { role: "user", content: "Hello" },
+        ],
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("new,model");
+      expect(req.body.messages[0].content).toContain("<CCR-SUBAGENT-MODEL>");
+      expect(req.body.messages[0].content).not.toContain("<AGR-SUBAGENT-MODEL>");
+    });
+
+    it("openai-responses: AGR tag extracted, CCR tag preserved", async () => {
+      const req = makeOpenAIResponsesReq({
+        model: "gpt-4o",
+        instructions: "<CCR-SUBAGENT-MODEL>old,model</CCR-SUBAGENT-MODEL><AGR-SUBAGENT-MODEL>new,model</AGR-SUBAGENT-MODEL>Remaining",
+      });
+      const context = makeContext(makeConfigService({ default: "p,default-m" }));
+
+      await router(req, {}, context);
+
+      expect(req.body.model).toBe("new,model");
+      expect(req.body.instructions).toContain("<CCR-SUBAGENT-MODEL>");
+      expect(req.body.instructions).not.toContain("<AGR-SUBAGENT-MODEL>");
+    });
   });
 });
 
