@@ -113,7 +113,7 @@
 
 ## 5. Router Protocol Generalization
 
-- [ ] 5.1 将 router 改为基于 normalizer 的协议无关逻辑
+- [x] 5.1 将 router 改为基于 normalizer 的协议无关逻辑
   - Scope: 对 anthropic/openai-chat/openai-responses 同步 await router；passthrough 不修改 body 和 scenario；已有 `<provider>,<model>` 原样保留。
   - Files: `packages/core/src/utils/router.ts`, namespace preHandler.
   - Verify: 三协议均可完成 default/think/longContext/webSearch 路由；passthrough 不产生副作用。
