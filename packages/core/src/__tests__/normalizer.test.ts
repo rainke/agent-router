@@ -218,6 +218,13 @@ describe("normalizeRequestBody — openai-chat", () => {
       expect(result.tools).toEqual(tools);
     });
 
+    it("hasWebSearch from web_search type", () => {
+      const result = normalizeRequestBody(
+        makeReq("openai-chat", { tools: [{ type: "web_search" }] })
+      );
+      expect(result.hasWebSearch).toBe(true);
+    });
+
     it("hasWebSearch from web_search_preview type", () => {
       const result = normalizeRequestBody(
         makeReq("openai-chat", { tools: [{ type: "web_search_preview" }] })
@@ -314,6 +321,13 @@ describe("normalizeRequestBody — openai-responses", () => {
     it("hasWebSearch from web_search type", () => {
       const result = normalizeRequestBody(
         makeReq("openai-responses", { tools: [{ type: "web_search" }] })
+      );
+      expect(result.hasWebSearch).toBe(true);
+    });
+
+    it("hasWebSearch from web_search_preview type", () => {
+      const result = normalizeRequestBody(
+        makeReq("openai-responses", { tools: [{ type: "web_search_preview" }] })
       );
       expect(result.hasWebSearch).toBe(true);
     });

@@ -285,8 +285,32 @@ describe("router — think scenario", () => {
 describe("router — webSearch scenario", () => {
   const routerConfig = { default: "p,default-m", webSearch: "p,web-m" };
 
-  it("anthropic: routes to webSearch when tool type starts with web_search", async () => {
+  it("anthropic: routes to webSearch when tool type is web_search", async () => {
     const req = makeAnthropicReq({
+      tools: [{ type: "web_search", name: "web_search" }],
+    });
+    const context = makeContext(makeConfigService(routerConfig));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,web-m");
+    expect(req.scenarioType).toBe("webSearch");
+  });
+
+  it("anthropic: routes to webSearch when tool type is web_search_preview", async () => {
+    const req = makeAnthropicReq({
+      tools: [{ type: "web_search_preview", name: "web_search" }],
+    });
+    const context = makeContext(makeConfigService(routerConfig));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,web-m");
+    expect(req.scenarioType).toBe("webSearch");
+  });
+
+  it("openai-chat: routes to webSearch when tool type is web_search", async () => {
+    const req = makeOpenAIChatReq({
       tools: [{ type: "web_search", name: "web_search" }],
     });
     const context = makeContext(makeConfigService(routerConfig));
@@ -312,6 +336,18 @@ describe("router — webSearch scenario", () => {
   it("openai-responses: routes to webSearch when tool type is web_search", async () => {
     const req = makeOpenAIResponsesReq({
       tools: [{ type: "web_search", name: "web_search" }],
+    });
+    const context = makeContext(makeConfigService(routerConfig));
+
+    await router(req, {}, context);
+
+    expect(req.body.model).toBe("p,web-m");
+    expect(req.scenarioType).toBe("webSearch");
+  });
+
+  it("openai-responses: routes to webSearch when tool type is web_search_preview", async () => {
+    const req = makeOpenAIResponsesReq({
+      tools: [{ type: "web_search_preview", name: "web_search" }],
     });
     const context = makeContext(makeConfigService(routerConfig));
 

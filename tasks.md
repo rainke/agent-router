@@ -119,13 +119,13 @@
   - Verify: 三协议均可完成 default/think/longContext/webSearch 路由；passthrough 不产生副作用。
   - Covers: R7-1, R7-2, R7-3, R7-8, R16-3, R16-4.
 
-- [ ] 5.2 替换 Subagent 模型标签为 `<AGR-SUBAGENT-MODEL>`
+- [x] 5.2 替换 Subagent 模型标签为 `<AGR-SUBAGENT-MODEL>`
   - Scope: 三协议系统提示词中提取新标签并原子移除首个匹配；旧 `<CCR-SUBAGENT-MODEL>` 不识别、不移除。
   - Files: router utility and tests.
   - Verify: Anthropic/Chat/Responses 往返属性测试；旧标签保留测试。
   - Covers: R7-4, R7-5, R7-6, R7-9, R18-3, R17-3.
 
-- [ ] 5.3 为 Anthropic 专属启发式加协议门控
+- [x] 5.3 为 Anthropic 专属启发式加协议门控
   - Scope: Claude Haiku/background 自动降级仅在 `req.apiProtocol === 'anthropic'` 运行；webSearch 支持 `web_search` 和 `web_search_preview`。
   - Files: `packages/core/src/utils/router.ts`.
   - Verify: OpenAI 模型名含 haiku 不触发 background；三协议 webSearch 场景测试通过。
