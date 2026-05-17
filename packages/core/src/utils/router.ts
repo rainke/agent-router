@@ -7,6 +7,7 @@ import { CLAUDE_PROJECTS_DIR, HOME_DIR } from "@agr/shared";
 import { LRUCache } from "lru-cache";
 import { ConfigService } from "../services/config";
 import { TokenizerService } from "../services/tokenizer";
+import { getSessionId } from "./session";
 
 // Types from @anthropic-ai/sdk
 interface Tool {
@@ -217,14 +218,9 @@ export interface RouterFallbackConfig {
 
 export const router = async (req: any, _res: any, context: RouterContext) => {
   const { configService, event } = context;
-  // Parse sessionId from metadata.user_id
-  if (req.body.metadata?.user_id) {
-    const parts = req.body.metadata.user_id.split("_session_");
-    if (parts.length > 1) {
-      req.sessionId = parts[1];
-    }
-  }
-  const lastMessageUsage = sessionUsageCache.get(req.sessionId);
+  // Use protocol-aware session manager
+  const sessionId = getSessionId(req);
+  const lastMessageUsage = sessionUsageCache.get(sessionId);
   const { messages, system = [], tools }: MessageCreateParamsBase = req.body;
   const rewritePrompt = configService.get("REWRITE_SYSTEM_PROMPT");
   if (

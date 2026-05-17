@@ -35,6 +35,7 @@ import { router, calculateTokenCount, searchProjectBySession } from "./utils/rou
 import { sessionUsageCache } from "./utils/cache";
 import { API_Protocol, detectApiProtocol } from "./utils/protocol";
 import { normalizeRequestBody, NormalizedRequest } from "./utils/normalizer";
+import { getSessionId, applySessionIdHeader } from "./utils/session";
 
 // Extend FastifyRequest to include custom properties
 declare module "fastify" {
@@ -225,6 +226,15 @@ class Server {
         done();
       });
 
+      // Resolve session ID for all non-passthrough requests (before router)
+      this.app.addHook("preHandler", (req: any, reply: any, done: () => void) => {
+        if (req.apiProtocol !== 'passthrough') {
+          getSessionId(req);
+          applySessionIdHeader(req, reply);
+        }
+        done();
+      });
+
       await this.registerNamespace('/')
 
       this.app.addHook(
@@ -284,6 +294,7 @@ export { detectApiProtocol } from "./utils/protocol";
 export type { API_Protocol } from "./utils/protocol";
 export { normalizeRequestBody } from "./utils/normalizer";
 export type { NormalizedRequest } from "./utils/normalizer";
+export { getSessionId, applySessionIdHeader } from "./utils/session";
 export type { RouterScenarioType, RouterFallbackConfig } from "./utils/router";
 export { ConfigService } from "./services/config";
 export { ProviderService } from "./services/provider";

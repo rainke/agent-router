@@ -105,7 +105,7 @@
   - Verify: 三协议表驱动测试；属性测试覆盖幂等和畸形输入不抛异常。
   - Covers: R6, R18-2.
 
-- [ ] 4.4 实现协议感知 Session_Manager
+- [x] 4.4 实现协议感知 Session_Manager
   - Scope: Anthropic 保留 metadata `_session_` 逻辑；OpenAI Chat/Responses 使用 `X-Session-Id`，缺失时生成 UUID v4 并回写响应头；同请求幂等；UUID 失败有回退。
   - Files: session utility/hook, router integration.
   - Verify: 单测和属性测试覆盖三协议、全域性、幂等性、响应头回写。
