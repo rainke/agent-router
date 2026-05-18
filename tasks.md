@@ -133,25 +133,25 @@
 
 ## 6. Multi-Client CLI Support
 
-- [ ] 6.1 泛化 `createEnvVariables(clientType)`
+- [x] 6.1 泛化 `createEnvVariables(clientType)`
   - Scope: 支持 `claude`, `codex`, `opencode`; Claude 输出 Anthropic env；Codex 输出 OpenAI env 且 base URL 以 `/v1` 结尾；OpenCode 同时输出两组；保留通用变量；非法类型抛错。
   - Files: `packages/cli/src/utils/createEnvVariables.ts`, CLI tests.
   - Verify: 属性测试覆盖幂等和非法输入；快照测试覆盖三种 clientType。
   - Covers: R11, R18-4.
 
-- [ ] 6.2 新增 `agr codex [args...]`
+- [x] 6.2 新增 `agr codex [args...]`
   - Scope: 加入 `KNOWN_COMMANDS`; 自动启动 server; 使用 `CODEX_PATH` 优先级 `config` > env > `codex`; 注入 codex env；不传 `--settings`，不写 statusLine 临时配置；退出后清理引用计数和服务。
   - Files: `packages/cli/src/cli.ts`, new or existing command utility.
   - Verify: spawn mock 测试覆盖 env、path 优先级、server 超时、清理逻辑。
   - Covers: R12.
 
-- [ ] 6.3 新增 `agr opencode [args...]`
+- [x] 6.3 新增 `agr opencode [args...]`
   - Scope: 加入 `KNOWN_COMMANDS`; 自动启动 server; `OPENCODE_PATH` 优先级 `config` > env > `opencode`; 注入 opencode env；ENOENT/spawn 失败输出安装提示并非零退出。
   - Files: `packages/cli/src/cli.ts`, command utility.
   - Verify: spawn mock 测试覆盖 env、path 优先级、server 启动、ENOENT 错误。
   - Covers: R13.
 
-- [ ] 6.4 扩展 `agr activate` / `agr env`
+- [x] 6.4 扩展 `agr activate` / `agr env`
   - Scope: `activate` 默认 claude；支持 `activate claude|codex|opencode`; unknown 输出帮助并非零退出；`env` 作为完全一致的别名。
   - Files: `packages/cli/src/utils/activateCommand.ts`, CLI parser.
   - Verify: 输出 export/unset 语句符合三种 clientType；`agr env codex` 与 `agr activate codex` 一致。

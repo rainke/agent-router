@@ -9,6 +9,7 @@ import {
 } from "./utils/processCheck";
 import { runModelSelector } from "./utils/modelSelector";
 import { activateCommand } from "./utils/activateCommand";
+import { executeClientCommand } from "./utils/clientCommand";
 import { readConfigFile } from "./utils";
 import { version } from "../package.json";
 import { spawn, exec } from "child_process";
@@ -30,6 +31,8 @@ const KNOWN_COMMANDS = [
   "status",
   "statusline",
   "code",
+  "codex",
+  "opencode",
   "model",
   "preset",
   "install",
@@ -51,10 +54,13 @@ Commands:
   status        Show server status
   statusline    Integrated statusline
   code          Execute claude command
+  codex         Execute codex command
+  opencode      Execute opencode command
   model         Interactive model selection and configuration
   preset        Manage presets (export, install, list, delete)
   install       Install preset from GitHub marketplace
   activate      Output environment variables for shell integration
+  env           Alias for activate
   ui            Open the web UI in browser
   -v, version   Show version information
   -h, help      Show help information
@@ -65,13 +71,17 @@ Presets:
 Examples:
   agr start
   agr code "Write a Hello World"
+  agr codex "Write a Hello World"
+  agr opencode "Write a Hello World"
   agr my-preset "Write a Hello World"    # Use preset configuration
   agr model
   agr preset export my-config            # Export current config as preset
   agr preset install /path/to/preset     # Install a preset from directory
   agr preset list                        # List all presets
   agr install my-preset                  # Install preset from marketplace
-  eval "$(agr activate)"  # Set environment variables globally
+  eval "$(agr activate)"                 # Set Claude environment variables
+  eval "$(agr activate codex)"           # Set Codex environment variables
+  eval "$(agr activate opencode)"        # Set OpenCode environment variables
   agr ui
 `;
 
@@ -273,7 +283,8 @@ async function main() {
       break;
     case "activate":
     case "env":
-      await activateCommand();
+      const clientArg = process.argv[3];
+      await activateCommand(clientArg);
       break;
     case "code":
       if (!isRunning) {
@@ -305,6 +316,39 @@ async function main() {
         executeCodeCommand(codeArgs);
       }
       break;
+    case "codex":
+    case "opencode": {
+      const clientName = command as "codex" | "opencode";
+      if (!isRunning) {
+        console.log("Service not running, starting service...");
+        const cliPath = join(__dirname, "cli.js");
+        const startProcess = spawn("node", [cliPath, "start"], {
+          detached: true,
+          stdio: "ignore",
+        });
+
+        startProcess.on("error", (error) => {
+          console.error("Failed to start service:", error.message);
+          process.exit(1);
+        });
+
+        startProcess.unref();
+
+        if (await waitForService()) {
+          const clientArgs = process.argv.slice(3);
+          executeClientCommand(clientName, clientArgs);
+        } else {
+          console.error(
+            "Service startup timeout, please manually run `agr start` to start the service"
+          );
+          process.exit(1);
+        }
+      } else {
+        const clientArgs = process.argv.slice(3);
+        executeClientCommand(clientName, clientArgs);
+      }
+      break;
+    }
     case "ui":
       // Check if service is running
       if (!isRunning) {
